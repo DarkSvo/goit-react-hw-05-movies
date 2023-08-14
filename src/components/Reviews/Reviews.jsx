@@ -1,41 +1,37 @@
-import { fetchMovieReview } from 'fetch/FetchApi';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { getMovieById } from 'components/services/api';
+import Container from 'components/Container/Container';
+import { StyledItem, StyledList } from './Reviews.styled';
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
-  const [error, setError] = useState('');
-  const { moviesId } = useParams();
+  const { movieId } = useParams();
 
   useEffect(() => {
-    if (moviesId === null) {
-      return;
-    }
-    const getReviews = async () => {
-      try {
-        const data = await fetchMovieReview(moviesId);
-        setReviews(data.results);
-      } catch (error) {
-        setError(error.message);
-      }
+    const getMovieData = async () => {
+      const movieData = await getMovieById(movieId, '/reviews');
+      setReviews(movieData.results);
     };
-    getReviews();
-  }, [moviesId]);
+
+    getMovieData();
+  }, [movieId]);
+
+  if (reviews.length === 0) {
+    return <div>There isn't reviews</div>;
+  }
 
   return (
-    <>
-      {error && <div>{error}</div>}
-      {reviews &&
-        reviews.map(review => {
-          return (
-            <div key={review.id}>
-              <h4>Author: {review.author}.</h4>
-              <p>{review.content}</p>
-            </div>
-          );
-        })}
-      {reviews.length === 0 && <h3>No yet reviews about this film</h3>}
-    </>
+    <Container>
+      <StyledList>
+        {reviews.map(review => (
+          <StyledItem key={review.id}>
+            <h3>{review.author}</h3>
+            <p>{review.content}</p>
+          </StyledItem>
+        ))}
+      </StyledList>
+    </Container>
   );
 };
 

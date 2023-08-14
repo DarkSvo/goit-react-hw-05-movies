@@ -1,30 +1,29 @@
-import { Route, Routes } from 'react-router-dom';
-import { lazy } from 'react';
-import { Container } from './App/App.styled';
-import Layout from './Layout/Layout';
-import WrongPath from 'pages/WrongPath';
+import { lazy, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-const HomePage = lazy(() => import('../pages/Home'));
-const MoviesSearchForm = lazy(() => import('../pages/MoviesSearch'));
-const MoviesDetails = lazy(() => import('../pages/MoviesDetails'));
-const Cast = lazy(() => import('./Cast/Cast'));
-const Reviews = lazy(() => import('./Reviews/Reviews'));
+const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
+const MoviesPage = lazy(() => import('../pages/MoviesPage/MoviesPage'));
+const Layout = lazy(() => import('../components/Layout/Layout'));
+const Movie = lazy(() => import('../pages/Movie/Movie'));
+const Reviews = lazy(() => import('../components/Reviews/Reviews'));
+const Cast = lazy(() => import('../components/Cast/Cast'));
 
 const App = () => {
   return (
-    <Container>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="movies" element={<MoviesSearchForm />} />
-          <Route path="movies/:moviesId" element={<MoviesDetails />}>
-            <Route path="cast" element={<Cast />} />
-            <Route path="reviews" element={<Reviews />} />
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes >
+          <Route path="/" element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="movies" element={<MoviesPage />} />
+            <Route path="movie/:movieId" element={<Movie />}>
+              <Route path="cast" element={<Cast />} />
+              <Route path="reviews" element={<Reviews />} />
+            </Route>
           </Route>
-          <Route path='*' element={<WrongPath />} />
-        </Route>
-      </Routes>
-    </Container>
+        </Routes>
+      </Suspense>
+    </div>
   );
 };
 

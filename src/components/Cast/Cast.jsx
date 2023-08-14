@@ -1,57 +1,36 @@
-import { fetchCast } from 'fetch/FetchApi';
+import { getMovieById } from 'components/services/api';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CastContainer, CastCard } from './Cast.styled';
+import { StyledItem, StyledList, StyledTitle } from './Cast.styled';
+import Container from 'components/Container/Container';
 
 const Cast = () => {
-  const [casts, setCasts] = useState(null);
-  const [error, setError] = useState('');
-  const { moviesId } = useParams();
+  const [crew, setCrew] = useState([]);
+  const { movieId } = useParams();
 
   useEffect(() => {
-    if (moviesId === null) {
-      return;
-    }
-
-    const getCasts = async () => {
-      try {
-        const data = await fetchCast(moviesId);
-        setCasts(data.cast);
-      } catch (error) {
-        setError(error);
-      }
+    const getMovie = async () => {
+      const movieData = await getMovieById(movieId, '/credits');
+      setCrew(movieData);
     };
-    getCasts();
-  }, [moviesId]);
+    getMovie();
+  }, [movieId]);
 
   return (
-    <>
-      {error && <div>{error}</div>}
-      {casts && (
-        <CastContainer>
-          {casts.map(cast => {
-            return (
-              <CastCard key={cast.cast_id}>
-                <img
-                  src={
-                    cast.profile_path !== null
-                      ? `https://image.tmdb.org/t/p/w500${cast.profile_path}`
-                      : 'https://i.pinimg.com/originals/a0/57/48/a05748c84d7093e382c560bbc57665ce.jpg'
-                  }
-                  alt={`${cast.name}`}
-                  width={200}
-                  height={300}
-                  loading="lazy"
-                />
-                <p>{cast.name}</p>
-                <p>Character: {cast.character}</p>
-              </CastCard>
-            );
-            
-          })}
-        </CastContainer>
-      )}
-    </>
+    <Container>
+      <StyledTitle>Cast:</StyledTitle>
+      <StyledList>
+        {crew.cast?.map(actor => (
+          <StyledItem key={actor.id}>
+            <img
+              src={`https://image.tmdb.org/t/p/w300${actor?.profile_path}`}
+              alt={actor.name}
+            />
+            <StyledTitle>{actor.name}</StyledTitle>
+          </StyledItem>
+        ))}
+      </StyledList>
+    </Container>
   );
 };
 

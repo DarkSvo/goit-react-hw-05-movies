@@ -1,25 +1,28 @@
-import { Outlet } from "react-router-dom";
-import { NavList, LinkStyle } from './Layout.styled';
-import { Suspense } from "react";
-import Spiner from "components/Spiner/Spiner";
+import React from 'react';
+
+import { Outlet } from 'react-router-dom';
+
+import { StyledHeader, StyledList, StyledLink } from './Layout.styled';
 
 const Layout = () => {
   return (
     <>
-      <NavList>
-        <li>
-          <LinkStyle to="/">Home</LinkStyle>
-        </li>
-        <li>
-          <LinkStyle to="/movies">Movies</LinkStyle>
-        </li>
-      </NavList>
-      <Suspense fallback={<Spiner />}>
-        <Outlet />
-      </Suspense>
-      
+      <StyledHeader>
+        <StyledLink to="/" className="logo">
+          Movies Logo
+        </StyledLink>
+        <StyledList>
+          <li>
+            <StyledLink to="/">Home</StyledLink>
+          </li>
+          <li>
+            <StyledLink to="/movies">Movies</StyledLink>
+          </li>
+        </StyledList>
+      </StyledHeader>
+      <Outlet />
     </>
   );
-}
+};
 
 export default Layout;
